@@ -402,7 +402,7 @@ def main():
             if args.naive
             else autoencoders.AssymSplicedAutoEncoder
         )
-        spliced_net = autoencoders.SplicedAutoEncoderSkorchNet(
+        spliced_net = autoencoders.SplicedAutoEncoderSkorchNet(  #! Model
             module=model_class,
             module__hidden_dim=h_dim,  # Based on hyperparam tuning
             module__input_dim1=sc_rna_dataset.data_raw.shape[1],
@@ -424,7 +424,7 @@ def main():
             device=utils.get_device(args.device),
             batch_size=bs,  # Based on  hyperparam tuning
             max_epochs=500,
-            callbacks=[
+            callbacks=[  #! callbacks
                 skorch.callbacks.EarlyStopping(patience=args.earlystop),
                 skorch.callbacks.LRScheduler(
                     policy=torch.optim.lr_scheduler.ReduceLROnPlateau,
@@ -444,7 +444,7 @@ def main():
             spliced_net.load_params(f_params=args.pretrain)
             spliced_net.partial_fit(sc_dual_train_dataset, y=None)
         else:
-            spliced_net.fit(sc_dual_train_dataset, y=None)
+            spliced_net.fit(sc_dual_train_dataset, y=None)  #! train the model
 
         fig = plot_loss_history(
             spliced_net.history, os.path.join(outdir_name, f"loss.{args.ext}")

@@ -999,6 +999,7 @@ class SplicedAutoEncoder(nn.Module):
         return retval_dict[mode]
 
 
+#* Model Class
 class NaiveSplicedAutoEncoder(SplicedAutoEncoder):
     """
     Naive "spliced" autoencoder that does not use shared branches and instead simply
@@ -1144,6 +1145,7 @@ class NaiveSplicedAutoEncoder(SplicedAutoEncoder):
         return retval_dict[mode]
 
 
+#* Model Class
 class AssymSplicedAutoEncoder(SplicedAutoEncoder):
     """
     Assymmetric spliced autoencoder where branch 2 is a chrom AE
@@ -1417,6 +1419,7 @@ class PairedAutoEncoderSkorchNet(skorch.NeuralNet):
         return self.module_.translate_2_to_1(enc2_torch)[0].detach().cpu().numpy()
 
 
+#* Chosen Model
 class SplicedAutoEncoderSkorchNet(PairedAutoEncoderSkorchNet):
     """
     Skorch wrapper for the SplicedAutoEncoder above.
