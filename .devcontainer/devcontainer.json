@@ -3,34 +3,52 @@
 {
 	"name": "Babel",
 
-	"image": "pytorch:babel",
+	// Specify container name
+	"runArgs": [
+		"--name", "devcontainer_babel_nm",
+		"--gpus", "all"
+	],
 
-	// Run container as own user (USER_ID=1009) with root permissions (GROUP_ID=1010)
+	"build": {
+		// Specify base image in Dockerfile
+		"dockerfile": "Dockerfile",
+		// Add own user to container
+		"args": {
+			"USERNAME": "bq_mmechtel",  // $USER
+			"USER_ID": "1009",  // $UID
+			"GROUP_ID": "1010"  // $GROUPS
+		  }
+	},
+
+	// Run container as own user ($UID:$GROUPS) with sudo permissions
 	"remoteUser": "1009:1010",
 
-	// Specify container name
-	"runArgs": ["--name", "devcontainer_babel"],
-
-	// Configure tool-specific properties, in this case the vscode R extension.
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"ms-python.python",
-				"ms-python.vscode-pylance"
-			]
-		}
-	},
+	// There is no real way to specify the docker build tag (https://github.com/microsoft/vscode-remote-release/issues/3650)
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
-	// Mount workspace to /home directory instead of the default /workspaces directory
-	"workspaceMount": "source=${localWorkspaceFolder}/..,target=/home,type=bind",
-	"workspaceFolder": "/home",
+	// Mount workspace to user home directory instead of the default /workspaces directory
+	"workspaceMount": "source=${localWorkspaceFolder}/..,target=/workspace,type=bind",	
+	"workspaceFolder": "/workspace",
 
-	// Copy users and groups to container
+	// Mount additional direcotries
 	"mounts": [
-		"source=/etc/passwd,target=/etc/passwd,type=bind,consistency=cached",
-		"source=/etc/group,target=/etc/group,type=bind,consistency=cached"
-	]
+		// personal tmux configuration (optional)
+		"source=${localEnv:HOME}/.tmux.conf,target=${localEnv:HOME}/.tmux.conf,type=bind,consistency=cached",
+		// data directory
+		"source=/raid/projects,target=/projects,type=bind,consistency=cached"
+	],
+
+	// Add vscode extensions (they will be installed to the container home directory)
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-python.black-formatter"
+			]
+		}
+	}
+
 }
